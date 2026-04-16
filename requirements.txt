@@ -1,3 +1,7 @@
+# Diese Zeile sorgt dafür, dass eine speicherfreundliche, vorkompilierte Version von pandas verwendet wird
+--only-binary pandas
+
+# Hier folgen die restlichen Bibliotheken
 pybit==5.8.0
 pandas==2.0.3
 ta==0.10.2
