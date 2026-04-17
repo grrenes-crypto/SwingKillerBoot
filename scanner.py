@@ -1,9 +1,55 @@
 import pandas as pd
 import ta
+import time
+import requests
 from pybit.unified_trading import HTTP
 from config import *
 
-session = HTTP(testnet=BYBIT_TESTNET, api_key=BYBIT_API_KEY, api_secret=BYBIT_API_SECRET)
+class TimeSyncHTTP(HTTP):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.time_offset = 0
+        self._sync_time()
+
+    def _sync_time(self):
+        try:
+            response = requests.get("https://api.bybit.com/v5/market/time")
+            server_time = int(response.json()["result"]["timeSecond"])
+            local_time = int(time.time())
+            self.time_offset = server_time - local_time
+            print(f"🕒 Zeitsynchronisation: Offset={self.time_offset}s")
+        except Exception as e:
+            print(f"⚠️ Zeitsynchronisation fehlgeschlagen: {e}")
+
+    def _get_timestamp(self):
+        return str(int((time.time() + self.time_offset) * 1000))
+
+    def _submit_request(self, method, path, params):
+        timestamp = self._get_timestamp()
+        recv_window = "5000"
+        param_str = "&".join(f"{k}={v}" for k, v in sorted(params.items()))
+        signature_payload = timestamp + self.api_key + recv_window + param_str
+        import hmac
+        import hashlib
+        signature = hmac.new(
+            bytes(self.api_secret, "utf-8"),
+            bytes(signature_payload, "utf-8"),
+            hashlib.sha256
+        ).hexdigest()
+        headers = {
+            "X-BAPI-API-KEY": self.api_key,
+            "X-BAPI-TIMESTAMP": timestamp,
+            "X-BAPI-SIGN": signature,
+            "X-BAPI-RECV-WINDOW": recv_window,
+        }
+        url = f"https://api.bybit.com{path}"
+        if method == "GET":
+            resp = requests.get(url, headers=headers, params=params)
+        else:
+            resp = requests.post(url, headers=headers, json=params)
+        return resp.json()
+
+session = TimeSyncHTTP(testnet=BYBIT_TESTNET, api_key=BYBIT_API_KEY, api_secret=BYBIT_API_SECRET)
 
 def get_top_coins(limit=TOP_COINS_LIMIT):
     tickers = session.get_tickers(category="linear")["result"]["list"]
