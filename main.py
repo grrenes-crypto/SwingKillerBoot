@@ -21,6 +21,7 @@ def check_balance():
         return False
 
 def run():
+    print("🚦 run() wurde aufgerufen")
     print("🔍 Starte Swing-Scan...")
     
     if not check_balance():
