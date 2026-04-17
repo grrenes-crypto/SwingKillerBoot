@@ -11,9 +11,11 @@ Symbol: {data['symbol']}
 Preis: {data['price']}
 RSI (1h): {data['rsi']}
 ATR: {data['atr']}
-EMA20: {data['ema20']}
-EMA50: {data['ema50']}
+EMA20 (1h): {data['ema20']}
+EMA50 (1h): {data['ema50']}
+Tages-Trend (EMA20 > EMA50): {data['trend_up']}
 
+Der Tages-Trend MUSS aufwärts sein für einen LONG-Trade.
 Soll jetzt ein LONG-Trade eröffnet werden? Antworte NUR im JSON-Format:
 {{"action": "BUY" oder "HOLD", "confidence": 0.0-1.0, "stop_loss": Zahl, "take_profit": Zahl, "reasoning": "..."}}
 """
