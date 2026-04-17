@@ -28,10 +28,10 @@ TRAILING_ACTIVATION = 1.5
 TRAILING_DISTANCE = 0.5
 POSITIONS_FILE = "positions.json"
 
-# Dynamischer Hebel Einstellungen
-BASE_LEVERAGE = 5.0
-MIN_LEVERAGE = 2.0
-MAX_LEVERAGE = 20.0
+# Dynamischer Hebel Einstellungen (angepasst)
+BASE_LEVERAGE = 2.0          # Standardhebel unter normalen Bedingungen
+MIN_LEVERAGE = 1.0           # Minimaler Hebel bei hoher Volatilität
+MAX_LEVERAGE = 3.0           # Maximaler Hebel bei niedriger Volatilität
 
 # Guthaben‑Check
 MIN_BALANCE_FOR_SCAN = 50.0
