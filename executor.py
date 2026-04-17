@@ -1,9 +1,7 @@
 import json
 import os
-from pybit.unified_trading import HTTP
+from scanner import session  # <-- DAS IST DIE EINZIGE ÄNDERUNG
 from config import *
-
-session = HTTP(testnet=BYBIT_TESTNET, api_key=BYBIT_API_KEY, api_secret=BYBIT_API_SECRET)
 
 def load_positions():
     if os.path.exists(POSITIONS_FILE):
